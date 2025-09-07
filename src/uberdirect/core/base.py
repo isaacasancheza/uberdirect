@@ -51,75 +51,75 @@ class Base(ABC):
             retriable_http_codes or DEFAULT_RETRIABLE_HTTP_CODES
         )
 
-    def get(
+    def _get(
         self,
         /,
         *args: URL,
         **kwargs: Unpack[OptionalArguments],
     ):
-        return self.wrapper(
+        return self._wrapper(
             *args,
             **kwargs,
             method='GET',
         )
 
-    def put(
+    def _put(
         self,
         body: Body,
         /,
         *args: URL,
         **kwargs: Unpack[OptionalArguments],
     ):
-        return self.wrapper(
+        return self._wrapper(
             *args,
             **kwargs,
             body=body,
             method='PUT',
         )
 
-    def post(
+    def _post(
         self,
         body: Body,
         /,
         *args: URL,
         **kwargs: Unpack[OptionalArguments],
     ):
-        return self.wrapper(
+        return self._wrapper(
             *args,
             **kwargs,
             body=body,
             method='POST',
         )
 
-    def patch(
+    def _patch(
         self,
         body: Body,
         /,
         *args: URL,
         **kwargs: Unpack[OptionalArguments],
     ):
-        return self.wrapper(
+        return self._wrapper(
             *args,
             **kwargs,
             body=body,
             method='PATCH',
         )
 
-    def delete(
+    def _delete(
         self,
         /,
         data: Body | None = None,
         *args: URL,
         **kwargs: Unpack[OptionalArguments],
     ):
-        return self.wrapper(
+        return self._wrapper(
             *args,
             **kwargs,
             body=data,
             method='DELETE',
         )
 
-    def wrapper(
+    def _wrapper(
         self,
         *args: URL,
         body: Body | None = None,
@@ -131,7 +131,7 @@ class Base(ABC):
         exception = None
         while retries <= self._max_retries:
             try:
-                return self.request(
+                return self._request(
                     *args,
                     body=body,
                     params=params,
@@ -152,7 +152,7 @@ class Base(ABC):
             else RuntimeError('An exception should have been thrown')
         )
 
-    def request(
+    def _request(
         self,
         *args: URL,
         body: Body | None = None,

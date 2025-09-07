@@ -22,7 +22,7 @@ class Quotes(Base):
         body = request.model_dump(
             exclude_none=True,
         )
-        response = self.post(
+        response = self._post(
             body,
             'delivery_quotes',
         )

@@ -17,5 +17,5 @@ class Deliveries(Base):
         body = request.model_dump(
             exclude_none=True,
         )
-        response = self.post(body, 'deliveries')
+        response = self._post(body, 'deliveries')
         return models.DeliveryResponse.model_validate(response)
