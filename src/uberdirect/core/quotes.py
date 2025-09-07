@@ -1,4 +1,4 @@
-from uberdirect import uberdirect_models
+from uberdirect import models
 from uberdirect.core.base import Base
 
 
@@ -12,8 +12,8 @@ class Quotes(Base):
     def create_quote(
         self,
         *,
-        request: uberdirect_models.QuoteRequest,
-    ) -> uberdirect_models.QuoteResponse:
+        request: models.QuoteRequest,
+    ) -> models.QuoteResponse:
         """
         Create quote.
 
@@ -26,4 +26,4 @@ class Quotes(Base):
             body,
             'delivery_quotes',
         )
-        return uberdirect_models.QuoteResponse.model_validate(response)
+        return models.QuoteResponse.model_validate(response)

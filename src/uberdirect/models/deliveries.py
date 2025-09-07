@@ -4,7 +4,8 @@ from typing import Annotated
 from pydantic import BaseModel, EmailStr, Field, StringConstraints
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from uberdirect import fields, uberdirect_constants
+from uberdirect import constants, fields
+from uberdirect.models.common import StructuredAddress
 
 
 class DeliveryManifestItemCustomizationOptionTaxInfo(BaseModel):
@@ -84,7 +85,7 @@ class DeliveryManifestItem(BaseModel):
     Quantity of items.
     """
 
-    size: uberdirect_constants.DeliveryManifestItemSize | None = None
+    size: constants.DeliveryManifestItemSize | None = None
     """
     Approximate size of item.
 
@@ -144,7 +145,7 @@ class DeliveryBarcodeRequirement(BaseModel):
     String value encoded in the barcode.
     """
 
-    type: uberdirect_constants.DeliveryBarcodeRequirementType
+    type: constants.DeliveryBarcodeRequirementType
     """
     Type of barcode.
     """
@@ -194,7 +195,7 @@ class DeliveryPincodeRequirement(BaseModel):
     When set to true in POST requests, the delivery will require pincode entry at handoff. The pincode is internally generated and shared by Uber.
     """
 
-    type: uberdirect_constants.DeliveryPincodeRequirementType | None = None
+    type: constants.DeliveryPincodeRequirementType | None = None
     """
     Pincode type. Defaults to default if not provided.
     """
@@ -310,7 +311,7 @@ class DeliveryRequest(BaseModel):
     **Note:** The app will prioritize the utilization of the pickup_business_name if this parameter is provided.
     """
 
-    pickup_address: fields.StructuredAddress
+    pickup_address: StructuredAddress
     """
     Pickup address details.
     """
@@ -365,7 +366,7 @@ class DeliveryRequest(BaseModel):
     Name of the place where the courier will make the dropoff. This information will be visible in the courier app.
     """
 
-    dropoff_address: fields.StructuredAddress
+    dropoff_address: StructuredAddress
     """
     Dropoff address details.
     """
@@ -432,7 +433,7 @@ class DeliveryRequest(BaseModel):
     List of items being delivered. This information will be visible in the courier app.
     """
 
-    deliverable_action: uberdirect_constants.DeliveryDeliverableAction
+    deliverable_action: constants.DeliveryDeliverableAction
     """
     Specify the action for the courier to take on a delivery.
     """
@@ -457,7 +458,7 @@ class DeliveryRequest(BaseModel):
     The ID of a previously generated delivery quote.
     """
 
-    undeliverable_action: uberdirect_constants.DeliveryUndeliverableAction | None = None
+    undeliverable_action: constants.DeliveryUndeliverableAction | None = None
     """
     If not set then the default value is return.
     """

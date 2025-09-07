@@ -1,4 +1,4 @@
-from uberdirect import uberdirect_models
+from uberdirect import models
 from uberdirect.core.base import Base
 
 
@@ -12,10 +12,10 @@ class Deliveries(Base):
     def create_delivery(
         self,
         *,
-        request: uberdirect_models.DeliveryRequest,
-    ) -> uberdirect_models.DeliveryResponse:
+        request: models.DeliveryRequest,
+    ) -> models.DeliveryResponse:
         body = request.model_dump(
             exclude_none=True,
         )
         response = self._post(body, 'deliveries')
-        return uberdirect_models.DeliveryResponse.model_validate(response)
+        return models.DeliveryResponse.model_validate(response)
