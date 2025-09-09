@@ -6,7 +6,7 @@ from pydantic_core import core_schema
 from pydantic_extra_types.phone_numbers import PhoneNumberValidator
 
 
-class DecimalFromInt(Decimal):
+class DecimalFromIntAnnotation(Decimal):
     @classmethod
     def __get_pydantic_core_schema__(
         cls,
@@ -39,3 +39,4 @@ type PhoneNumber = Annotated[
         default_region='MX',
     ),
 ]
+type DecimalFromInt = Annotated[Decimal, DecimalFromIntAnnotation]
