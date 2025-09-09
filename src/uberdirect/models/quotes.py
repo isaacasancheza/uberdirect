@@ -117,7 +117,7 @@ class QuoteResponse(BaseModel):
     Estimated drop-off time. This value may exceed the request dropoff_deadline if the delivery window does not meet minimum requirements. Please validate the timestamps returned.
     """
 
-    duration: datetime
+    duration: int
     """
     Estimated minutes for this delivery to reach dropoff.    
     """
