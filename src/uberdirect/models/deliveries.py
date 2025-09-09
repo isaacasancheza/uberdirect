@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Annotated
 
 from pydantic import BaseModel, EmailStr, Field, StringConstraints
@@ -104,14 +105,17 @@ class DeliveryManifestItem(BaseModel):
     Price in cents ( ¹/₁₀₀ of currency unit ).
     """
 
-    weight: int = Field(
-        ge=1,
-    )
+    weight: Annotated[
+        int | None,
+        Field(
+            ge=1,
+        ),
+    ] = None
     """
     Weight in grams.
     """
 
-    vat_percentage: fields.DecimalFromInt
+    vat_percentage: fields.DecimalFromInt | None = None
     """
     The percentage of VAT (value add tax) associated to the manifest_items. i.e.: 12.5% => 1250000.
     """
@@ -433,7 +437,7 @@ class DeliveryRequest(BaseModel):
     List of items being delivered. This information will be visible in the courier app.
     """
 
-    deliverable_action: constants.DeliveryDeliverableAction
+    deliverable_action: constants.DeliveryDeliverableAction | None = None
     """
     Specify the action for the courier to take on a delivery.
     """
@@ -468,7 +472,7 @@ class DeliveryRequest(BaseModel):
         Field(
             ge=0,
         ),
-    ] = fields.DecimalFromInt('0')
+    ] = Decimal('0')
     """
     Amount in cents ( ¹/₁₀₀ of currency unit ) that will be paid to the courier as a tip. e.g.: $5.00 => 500.
 
