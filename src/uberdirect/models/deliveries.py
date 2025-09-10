@@ -1,5 +1,4 @@
 from datetime import datetime
-from decimal import Decimal
 from typing import Annotated
 
 from pydantic import BaseModel, EmailStr, Field, StringConstraints
@@ -303,11 +302,7 @@ class DeliveryUserFeesSummary(BaseModel):
     user_fee_tax_info: DeliveryUserFeesSummaryTaxInfo
 
 
-class DeliveryRequest(BaseModel):
-    """
-    https://developer.uber.com/docs/deliveries/api-reference/daas#tag/Delivery/paths/~1customers~1%7Bcustomer_id%7D~1deliveries/post
-    """
-
+class DeliveryCreateRequest(BaseModel):
     pickup_name: str
     """
     Designation of the location where the courier will make the pickup. This information will be visible within the courier app.
@@ -468,11 +463,11 @@ class DeliveryRequest(BaseModel):
     """
 
     tip: Annotated[
-        fields.DecimalFromInt,
+        fields.DecimalFromInt | None,
         Field(
             ge=0,
         ),
-    ] = Decimal('0')
+    ] = None
     """
     Amount in cents ( ¹/₁₀₀ of currency unit ) that will be paid to the courier as a tip. e.g.: $5.00 => 500.
 
@@ -522,7 +517,7 @@ class DeliveryRequest(BaseModel):
     """
 
 
-class DeliveryResponse(BaseModel):
+class Delivery(BaseModel):
     id: str
     """
     Unique identifier for the delivery (del_ + tokenize(uuid)).
@@ -541,4 +536,94 @@ class DeliveryResponse(BaseModel):
     tracking_url: str
     """
     This URL can be used to track the courier during the delivery (via an unauthenticated webpage).
+    """
+
+
+class DeliveryUpdateRequestPickupVerification(BaseModel):
+    barcodes: list[DeliveryBarcodeRequirement]
+    """
+    Barcode values/types that must be scanned at the waypoint. Number of elements in the array is equal to the number of barcodes that must be scanned.
+    """
+
+
+class DeliveryUpdateRequestDropoffVerification(BaseModel):
+    barcodes: list[DeliveryBarcodeRequirement]
+    """
+    Barcode values/types that must be scanned at the waypoint. Number of elements in the array is equal to the number of barcodes that must be scanned.
+    """
+
+
+class DeliveryUpdateRequest(BaseModel):
+    pickup_notes: Annotated[
+        str | None,
+        StringConstraints(
+            max_length=280,
+        ),
+    ] = None
+    """
+    Additional instructions for the courier at the pickup location. Max 280 characters.
+    """
+
+    pickup_ready_dt: datetime | None = None
+    """
+    (RFC 3339) Beginning of the window when an order must be picked up. Must be less than 30 days in the future.
+    """
+
+    pickup_deadline_dt: datetime | None = None
+    """
+    (RFC 3339) End of the window when an order may be picked up. Must be at least 10 mins later than pickup_ready_dt and at least 20 minutes in the future from now.
+    """
+
+    pickup_verification: DeliveryUpdateRequestDropoffVerification | None = None
+    """
+    Verification steps (e.g. Barcode scanning) that must be taken before the pickup can be completed.
+    """
+
+    dropoff_notes: Annotated[
+        str | None,
+        StringConstraints(
+            max_length=280,
+        ),
+    ] = None
+    """
+    Additional instructions for the courier at the dropoff location, accessible after the courier accepts the trip and before heading to the dropoff location. Limited to 280 characters.
+    """
+
+    dropoff_latitude: Latitude | None = None
+    """
+    Dropoff latitude coordinate.
+    """
+
+    dropoff_longitude: Longitude | None = None
+    """
+    Dropoff longitude coordinate.
+    """
+
+    dropoff_ready_dt: datetime | None = None
+    """
+    (RFC 3339) Beginning of the window when an order must be dropped off. Must be less than or equal to pickup_deadline_dt.
+    """
+
+    dropoff_deadline_dt: datetime | None = None
+    """
+    (RFC 3339) End of the window when an order must be dropped off. Must be at least 20 mins later than dropoff_ready_dt and must be greater than or equal to pickup_deadline_dt.
+    """
+
+    dropoff_verification: DeliveryUpdateRequestDropoffVerification | None = None
+    """
+    Verification steps (e.g. Barcode scanning) that must be taken before the dropoff can be completed.
+    """
+
+    manifest_reference: str | None = None
+    """
+    A reference identifying the manifest. Utilize this to link a delivery with relevant data in your system. This detail will be visible within the courier app.
+
+    **Note:**
+    Please be aware that the combination of this field with external_id must be unique; otherwise, the delivery creation will not succeed.
+    If you can't ensure uniqueness for the manifest_reference, please include the "idempotency_key" in the request body and make sure it is unique.
+    """
+
+    tip_by_customer: fields.DecimalFromInt | None = None
+    """
+    Amount in cents ( ¹/₁₀₀ of currency unit ) that will be paid to the courier as a tip.
     """

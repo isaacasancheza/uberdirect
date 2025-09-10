@@ -7,7 +7,7 @@ from uberdirect import fields
 from uberdirect.models.common import StructuredAddress
 
 
-class QuoteRequest(BaseModel):
+class QuoteCreateRequest(BaseModel):
     pickup_address: StructuredAddress
     """
     Pickup address details.
@@ -81,7 +81,7 @@ class QuoteRequest(BaseModel):
     """
 
 
-class QuoteResponse(BaseModel):
+class QuoteCreateResponse(BaseModel):
     id: str
     """
     Unique identifier for the quote (always starts with dqt_)

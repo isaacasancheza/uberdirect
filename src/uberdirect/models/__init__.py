@@ -2,7 +2,9 @@ from .common import (
     StructuredAddress,
 )
 from .deliveries import (
+    Delivery,
     DeliveryBarcodeRequirement,
+    DeliveryCreateRequest,
     DeliveryDropoffVerification,
     DeliveryExternalUserInfo,
     DeliveryExternalUserInfoDevice,
@@ -15,14 +17,15 @@ from .deliveries import (
     DeliveryManifestItemDimensions,
     DeliveryPickupVerification,
     DeliveryPincodeRequirement,
-    DeliveryRequest,
-    DeliveryResponse,
     DeliveryReturnVerificationRequirement,
     DeliverySignatureRequirement,
+    DeliveryUpdateRequest,
+    DeliveryUpdateRequestDropoffVerification,
+    DeliveryUpdateRequestPickupVerification,
     DeliveryUserFeesSummary,
     DeliveryUserFeesSummaryTaxInfo,
 )
 from .quotes import (
-    QuoteRequest,
-    QuoteResponse,
+    QuoteCreateRequest,
+    QuoteCreateResponse,
 )

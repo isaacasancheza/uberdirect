@@ -12,13 +12,8 @@ class Quotes(Base):
     def create_quote(
         self,
         *,
-        request: models.QuoteRequest,
-    ) -> models.QuoteResponse:
-        """
-        Create quote.
-
-        https://developer.uber.com/docs/deliveries/api-reference/daas#tag/Quotes/paths/~1customers~1%7Bcustomer_id%7D~1delivery_quotes/post
-        """
+        request: models.QuoteCreateRequest,
+    ) -> models.QuoteCreateResponse:
         body = request.model_dump(
             exclude_none=True,
         )
@@ -26,4 +21,4 @@ class Quotes(Base):
             body,
             'delivery_quotes',
         )
-        return models.QuoteResponse.model_validate(response)
+        return models.QuoteCreateResponse.model_validate(response)
