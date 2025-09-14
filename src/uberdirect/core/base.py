@@ -169,7 +169,7 @@ class Base(ABC):
 
         headers['Authorization'] = f'Bearer {access_token}'
 
-        url = self._api_root + '/'.join(str(arg) for arg in args)
+        url = self._api_root + '/' + '/'.join(str(arg) for arg in args)
 
         response = requests.request(
             url=url,
