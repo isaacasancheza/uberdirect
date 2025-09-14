@@ -1,7 +1,8 @@
+import random
 from abc import ABC
 from time import sleep
-from types import FunctionType
 from typing import Any, Callable, Literal, NotRequired, TypedDict, Unpack
+from urllib.parse import quote
 
 import requests
 from aws_lambda_powertools import Logger
@@ -16,7 +17,9 @@ type OAuthVersion = Literal['v2']
 type AccessToken = str | Callable[[], str]
 
 BASE_URL = 'https://api.uber.com/{version}/customers/{customer_id}'
-OATH_URL = 'https://auth.uber.com/oauth'
+OAUTH_URL = 'https://auth.uber.com/oauth'
+DEFAULT_TIMEOUT = 10
+DEFAULT_JITTER_MAX = 0.5
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_RETRIABLE_HTTP_CODES = {
     401,
@@ -43,15 +46,23 @@ class Base(ABC):
         /,
         *,
         version: APIVersion,
+        timeout: float | None = None,
+        session: requests.Session | None = None,
+        jitter_max: float | None = None,
         max_retries: int | None = None,
         retriable_http_codes: set[int] | None = None,
     ) -> None:
+        self._session = session or requests.Session()
+        self._timeout = DEFAULT_TIMEOUT if timeout is None else timeout
         self._api_root = BASE_URL.format(version=version, customer_id=customer_id)
-        self._max_retries = max_retries or DEFAULT_MAX_RETRIES
+        self._jitter_max = DEFAULT_JITTER_MAX if jitter_max is None else jitter_max
+        self._max_retries = DEFAULT_MAX_RETRIES if max_retries is None else max_retries
         self._customer_id = customer_id
         self._access_token = access_token
         self._retriable_http_codes = (
-            retriable_http_codes or DEFAULT_RETRIABLE_HTTP_CODES
+            DEFAULT_RETRIABLE_HTTP_CODES
+            if retriable_http_codes is None
+            else retriable_http_codes
         )
 
     def _get(
@@ -129,9 +140,9 @@ class Base(ABC):
         params: Params | None = None,
         method: Method,
         headers: Headers | None = None,
-    ) -> dict[str, Any]:
+    ) -> Any:
         retries = 0
-        exception = None
+        exception: Exception | None = None
         while retries <= self._max_retries:
             try:
                 return self._request(
@@ -144,15 +155,53 @@ class Base(ABC):
             except requests.HTTPError as e:
                 exception = e
                 if e.response.status_code in self._retriable_http_codes:
-                    backoff = min(2**retries, 20)
+                    backoff = min(2**retries, 20) + random.uniform(0, self._jitter_max)
+                    # honor Retry-After if present (seconds), else exponential backoff with jitter
+                    if retry_after := e.response.headers.get('Retry-After'):
+                        try:
+                            backoff = float(retry_after)
+                        except (TypeError, ValueError):
+                            pass
+                    logger.debug(
+                        f'Retrying {method} after HTTP {e.response.status_code}; attempt {retries + 1} in {backoff:.2f}s'
+                    )
                     sleep(backoff)
                     retries += 1
                     continue
                 raise
-        if exception:
-            logger.exception(exception)
-            raise exception
-        raise RuntimeError('An exception should have been thrown')
+            except (requests.ConnectionError, requests.Timeout) as e:
+                exception = e
+                backoff = min(2**retries, 20) + random.uniform(0, self._jitter_max)
+                logger.debug(
+                    f'Retrying {method} after network error; attempt {retries + 1} in {backoff:.2f}s'
+                )
+                sleep(backoff)
+                retries += 1
+                continue
+
+        # linter
+        assert exception
+
+        # append response
+        extra: dict[str, Any] = {
+            'error': str(exception),
+        }
+        if isinstance(exception, requests.HTTPError):
+            content_type = exception.response.headers.get('Content-Type')
+            if content_type == 'application/json':
+                response_body = exception.response.json()
+            else:
+                response_body = exception.response.text
+
+            extra['status_code'] = exception.response.status_code
+            extra['response_body'] = response_body
+
+        logger.exception(
+            msg='Request failed after retries',
+            extra=extra,
+        )
+
+        raise exception
 
     def _request(
         self,
@@ -161,27 +210,35 @@ class Base(ABC):
         params: Params | None = None,
         method: Method,
         headers: Headers | None = None,
-    ) -> dict[str, Any]:
-        if not headers:
-            headers = {}
+    ) -> Any:
+        # copy headers to avoid mutating caller dict
+        headers = {**(headers or {})}
 
         access_token = self._access_token
-        if isinstance(access_token, FunctionType):
+        if callable(access_token):
             access_token = access_token()
 
         headers['Authorization'] = f'Bearer {access_token}'
+        headers.setdefault('Accept', 'application/json')
 
-        url = self._api_root + '/' + '/'.join(str(arg) for arg in args)
+        # safe URL join without double slashes and with path segment quoting
+        path_segments = [self._api_root.rstrip('/')]
+        path_segments.extend(quote(str(arg).strip('/'), safe='') for arg in args)
+        url = '/'.join(path_segments)
 
-        response = requests.request(
+        response = self._session.request(
             url=url,
-            data=body,
+            json=body,
             method=method,
             params=params,
             headers=headers,
+            timeout=self._timeout,
         )
 
         response.raise_for_status()
+
+        if response.status_code == 204 or not response.content:
+            return {}
 
         return response.json()
 
@@ -193,7 +250,7 @@ class Base(ABC):
         client_secret: str,
     ) -> str:
         # oauth endpoint
-        url = '/'.join([OATH_URL, version, 'token'])
+        url = '/'.join([OAUTH_URL, version, 'token'])
 
         # data
         data = {
@@ -207,6 +264,7 @@ class Base(ABC):
         response = requests.post(
             url=url,
             data=data,
+            timeout=DEFAULT_TIMEOUT,
         )
 
         # assert response
