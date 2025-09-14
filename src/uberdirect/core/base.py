@@ -4,6 +4,7 @@ from types import FunctionType
 from typing import Any, Callable, Literal, NotRequired, TypedDict, Unpack
 
 import requests
+from aws_lambda_powertools import Logger
 
 type URL = str | int
 type Body = dict
@@ -25,6 +26,8 @@ DEFAULT_RETRIABLE_HTTP_CODES = {
     503,
     504,
 }
+
+logger = Logger()
 
 
 class OptionalArguments(TypedDict):
@@ -146,11 +149,10 @@ class Base(ABC):
                     retries += 1
                     continue
                 raise
-        raise (
-            exception
-            if exception
-            else RuntimeError('An exception should have been thrown')
-        )
+        if exception:
+            logger.exception(exception)
+            raise exception
+        raise RuntimeError('An exception should have been thrown')
 
     def _request(
         self,
