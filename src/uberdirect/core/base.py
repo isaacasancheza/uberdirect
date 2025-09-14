@@ -5,7 +5,6 @@ from typing import Any, Callable, Literal, NotRequired, TypedDict, Unpack
 from urllib.parse import quote
 
 import requests
-from aws_lambda_powertools import Logger
 from pydantic import BaseModel
 
 type URL = str | int
@@ -30,8 +29,6 @@ DEFAULT_RETRIABLE_HTTP_CODES = {
     503,
     504,
 }
-
-logger = Logger()
 
 
 class OptionalArguments(TypedDict):
@@ -163,9 +160,6 @@ class Base(ABC):
                             backoff = float(retry_after)
                         except (TypeError, ValueError):
                             pass
-                    logger.debug(
-                        f'Retrying {method} after HTTP {e.response.status_code}; attempt {retries + 1} in {backoff:.2f}s'
-                    )
                     sleep(backoff)
                     retries += 1
                     continue
@@ -173,34 +167,12 @@ class Base(ABC):
             except (requests.ConnectionError, requests.Timeout) as e:
                 exception = e
                 backoff = min(2**retries, 20) + random.uniform(0, self._jitter_max)
-                logger.debug(
-                    f'Retrying {method} after network error; attempt {retries + 1} in {backoff:.2f}s'
-                )
                 sleep(backoff)
                 retries += 1
                 continue
 
         # linter
         assert exception
-
-        # append response
-        extra: dict[str, Any] = {
-            'error': str(exception),
-        }
-        if isinstance(exception, requests.HTTPError):
-            content_type = exception.response.headers.get('Content-Type')
-            if content_type == 'application/json':
-                response_body = exception.response.json()
-            else:
-                response_body = exception.response.text
-
-            extra['status_code'] = exception.response.status_code
-            extra['response_body'] = response_body
-
-        logger.exception(
-            msg='Request failed after retries',
-            extra=extra,
-        )
 
         raise exception
 

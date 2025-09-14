@@ -1,6 +1,6 @@
 [project]
 name = "uberdirect"
-version = "0.8.0"
+version = "0.9.0"
 description = "Simple Uber Direct API Wrapper"
 authors = [
     { name = "Isaac Sánchez", email = "isaac@elrincondelsanchez.com" }
@@ -20,9 +20,6 @@ dev = [
     "mypy>=1.15.0",
     "pytest>=8.3.5",
     "ruff>=0.11.1",
-]
-logging = [
-    "aws-lambda-powertools>=3.20.0",
 ]
 
 [build-system]
