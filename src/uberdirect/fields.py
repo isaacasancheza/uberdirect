@@ -1,12 +1,61 @@
+import json
 from decimal import Decimal
 from typing import Annotated, Any
 
-from pydantic import GetCoreSchemaHandler
+from pydantic import BaseModel, GetCoreSchemaHandler
 from pydantic_core import core_schema
 from pydantic_extra_types.phone_numbers import PhoneNumberValidator
 
 
-class DecimalFromIntAnnotation(Decimal):
+class _StructuredAddressModel(BaseModel):
+    street_address: tuple[str] | tuple[str, str]
+    district: str
+    city: str
+    state: str
+    zip_code: str
+    country: str
+
+
+class _StructuredAddressAnnotation:
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls,
+        source_type: type[Any],
+        handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        schema = handler.generate_schema(source_type)
+        return core_schema.union_schema(
+            [
+                core_schema.chain_schema(
+                    [
+                        core_schema.str_schema(),
+                        core_schema.no_info_plain_validator_function(cls._parse_str),
+                        schema,
+                    ],
+                ),
+                schema,
+            ],
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                cls._serialize
+            ),
+        )
+
+    @classmethod
+    def _parse_str(cls, value: str) -> _StructuredAddressModel:
+        return _StructuredAddressModel.model_validate(json.loads(value))
+
+    @classmethod
+    def _serialize(cls, value: _StructuredAddressModel | str) -> str:
+        if isinstance(value, str):
+            return value
+        return json.dumps(
+            value.model_dump(),
+            sort_keys=True,
+            separators=(',', ':'),
+        )
+
+
+class _DecimalFromIntAnnotation(Decimal):
     @classmethod
     def __get_pydantic_core_schema__(
         cls,
@@ -39,4 +88,7 @@ type PhoneNumber = Annotated[
         default_region='MX',
     ),
 ]
-type DecimalFromInt = Annotated[Decimal, DecimalFromIntAnnotation]
+type DecimalFromInt = Annotated[Decimal, _DecimalFromIntAnnotation]
+type StructuredAddress = Annotated[
+    _StructuredAddressModel, _StructuredAddressAnnotation
+]

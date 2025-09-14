@@ -6,7 +6,6 @@ from pydantic import BaseModel, EmailStr, Field, StringConstraints
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import constants, fields
-from uberdirect.models.common import StructuredAddress
 
 
 class DeliveryManifestItemCustomizationOptionTaxInfo(BaseModel):
@@ -448,7 +447,7 @@ class DeliveryCreateRequest(BaseModel):
     **Note:** The app will prioritize the utilization of the pickup_business_name if this parameter is provided.
     """
 
-    pickup_address: StructuredAddress
+    pickup_address: fields.StructuredAddress
     """
     Pickup address details.
     """
@@ -503,7 +502,7 @@ class DeliveryCreateRequest(BaseModel):
     Name of the place where the courier will make the dropoff. This information will be visible in the courier app.
     """
 
-    dropoff_address: StructuredAddress
+    dropoff_address: fields.StructuredAddress
     """
     Dropoff address details.
     """

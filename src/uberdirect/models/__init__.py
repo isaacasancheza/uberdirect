@@ -1,6 +1,3 @@
-from .common import (
-    StructuredAddress,
-)
 from .deliveries import (
     Delivery,
     DeliveryBarcodeRequirement,

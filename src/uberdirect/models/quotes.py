@@ -4,11 +4,10 @@ from pydantic import BaseModel
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import fields
-from uberdirect.models.common import StructuredAddress
 
 
 class QuoteCreateRequest(BaseModel):
-    pickup_address: StructuredAddress
+    pickup_address: fields.StructuredAddress
     """
     Pickup address details.
     """
@@ -38,7 +37,7 @@ class QuoteCreateRequest(BaseModel):
     Phone number for the pickup location, usually the store's contact. This number allows the courier to call before heading to the dropoff location.
     """
 
-    dropoff_address: StructuredAddress
+    dropoff_address: fields.StructuredAddress
     """
     Dropoff address details.
     """
