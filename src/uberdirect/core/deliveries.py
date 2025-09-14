@@ -14,10 +14,7 @@ class Deliveries(Base):
         *,
         request: models.DeliveryCreateRequest,
     ) -> models.Delivery:
-        body = request.model_dump(
-            exclude_none=True,
-        )
-        response = self._post(body, 'deliveries')
+        response = self._post(request, 'deliveries')
         return models.Delivery.model_validate(response)
 
     def update_delivery(
@@ -27,10 +24,7 @@ class Deliveries(Base):
         *,
         request: models.DeliveryUpdateRequest,
     ) -> models.Delivery:
-        body = request.model_dump(
-            exclude_none=True,
-        )
-        response = self._post(body, 'deliveries', delivery_id)
+        response = self._post(request, 'deliveries', delivery_id)
         return models.Delivery.model_validate(response)
 
     def cancel_delivery(

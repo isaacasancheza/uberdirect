@@ -6,9 +6,10 @@ from urllib.parse import quote
 
 import requests
 from aws_lambda_powertools import Logger
+from pydantic import BaseModel
 
 type URL = str | int
-type Body = dict
+type Body = dict | BaseModel
 type Params = dict
 type Method = Literal['GET', 'PUT', 'POST', 'PATCH', 'DELETE']
 type Headers = dict
@@ -225,6 +226,13 @@ class Base(ABC):
         path_segments = [self._api_root.rstrip('/')]
         path_segments.extend(quote(str(arg).strip('/'), safe='') for arg in args)
         url = '/'.join(path_segments)
+
+        # serialize pydantic models
+        if isinstance(body, BaseModel):
+            body = body.model_dump(
+                mode='json',
+                exclude_none=True,
+            )
 
         response = self._session.request(
             url=url,

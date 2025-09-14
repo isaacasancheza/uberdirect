@@ -14,11 +14,8 @@ class Quotes(Base):
         *,
         request: models.QuoteCreateRequest,
     ) -> models.QuoteCreateResponse:
-        body = request.model_dump(
-            exclude_none=True,
-        )
         response = self._post(
-            body,
+            request,
             'delivery_quotes',
         )
         return models.QuoteCreateResponse.model_validate(response)
