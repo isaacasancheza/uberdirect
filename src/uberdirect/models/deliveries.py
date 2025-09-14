@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Annotated
+from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field, StringConstraints
 from pydantic_extra_types.coordinate import Latitude, Longitude
@@ -302,6 +303,143 @@ class DeliveryUserFeesSummary(BaseModel):
     user_fee_tax_info: DeliveryUserFeesSummaryTaxInfo
 
 
+class LatLng(BaseModel):
+    lat: Latitude
+    """
+    Latitude.
+    """
+
+    lng: Longitude
+    """
+    Longitude.
+    """
+
+
+class CourierPublicPhoneInfo(BaseModel):
+    formatted_phone_number: str
+    """
+    The formatted phone number with the pin code.
+    """
+
+    phone_number: str
+    """
+    The anonimized courier's phone number.
+    """
+
+    pin_code: str
+    """
+    A pin code required for dialing the courier.
+    """
+
+
+class Courier(BaseModel):
+    name: str
+    """
+    Courier's first name and last initial.
+    """
+
+    vehicle_type: str
+    """
+    The type of vehicle the courier is using. Currently supports bicycle, car, van, truck, scooter, motorcycle, and walker.
+    """
+
+    phone_number: str
+    """
+    The courier's phone number. This is a masked phone number that can only receive calls or SMS from the dropoff phone number.
+    """
+
+    location: LatLng
+
+    img_href: str
+    """
+    A URL to the courier's profile image.
+    """
+
+    public_phone_info: CourierPublicPhoneInfo
+
+
+class Delivery(BaseModel):
+    id: str
+    """
+    Unique identifier for the delivery (del_ + tokenize(uuid)).
+    """
+
+    quote_id: str | None = None
+    """
+    ID for the Delivery Quote if one was provided when creating this delivery.
+    """
+
+    complete: bool
+    """
+    Flag indicating if the delivery has ended, regardless of the possible end status values: delivered, canceled, returned.
+    """
+
+    courier: Courier | None = None
+    """
+    Courier info.
+    """
+
+    courier_imminent: bool
+    """
+    Flag indicating if the courier is close to the pickup or dropoff location.
+    """
+
+    created: datetime
+    """
+    Date/time at which the delivery was created.
+    """
+
+    currency: str
+    """
+    Three-letter ISO currency code, in lowercase.
+    """
+
+    deliverable_action: constants.DeliveryDeliverableAction
+    """
+    Specify the action for the courier to take on a delivery.
+    """
+
+    dropoff_deadline: datetime | None = None
+    """
+    When a delivery must be dropped off. This is the end of the dropoff window.
+    """
+
+    dropoff_eta: datetime
+    """
+    Estimated dropoff time.
+    """
+
+    fee: fields.DecimalFromInt
+    """
+    Amount in cents ( ¹/₁₀₀ of currency unit ) that will be charged if this delivery is created.
+    """
+
+    pickup_deadline: datetime | None = None
+    """
+    When a delivery must be picked up by. This is the end of the pickup window.
+    """
+
+    pickup_eta: datetime
+    """
+    Estimated time the courier will arrive at the pickup location.
+    """
+
+    pickup_ready: datetime
+    """
+    When a delivery is ready to be picked up. This is the start of the pickup window.
+    """
+
+    uuid: UUID
+    """
+    Alternative delivery identifier. The id field should be used for any identification purposes. The uuid field is equally unique but loses contextual information - Nothing in this identifier indicates that it points to a Delivery. uuid is case-sensitive. Value for the 1uuid field is UUID v4 with - characters removed.
+    """
+
+    tracking_url: str
+    """
+    This URL can be used to track the courier during the delivery (via an unauthenticated webpage).
+    """
+
+
 class DeliveryCreateRequest(BaseModel):
     pickup_name: str
     """
@@ -514,28 +652,6 @@ class DeliveryCreateRequest(BaseModel):
     user_fees_summary: list[DeliveryUserFeesSummary] | None = None
     """
     A breakdown of how the order value is calculated.
-    """
-
-
-class Delivery(BaseModel):
-    id: str
-    """
-    Unique identifier for the delivery (del_ + tokenize(uuid)).
-    """
-
-    uuid: str
-    """
-    Alternative delivery identifier. The id field should be used for any identification purposes. The uuid field is equally unique but loses contextual information - Nothing in this identifier indicates that it points to a Delivery. uuid is case-sensitive. Value for the 1uuid field is UUID v4 with - characters removed.
-    """
-
-    quote_id: str
-    """
-    ID for the Delivery Quote if one was provided when creating this delivery.
-    """
-
-    tracking_url: str
-    """
-    This URL can be used to track the courier during the delivery (via an unauthenticated webpage).
     """
 
 
