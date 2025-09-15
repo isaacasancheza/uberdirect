@@ -12,7 +12,6 @@ class Model(BaseModel):
 def test_structured_address():
     address_data = dict(
         street_address=('Street 1',),
-        district='Tacubaya',
         city='CDMX',
         state='VZ',
         country='MX',
@@ -29,5 +28,5 @@ def test_structured_address():
     model_3 = Model.model_validate({'address': address_string})
     model_4 = Model.model_validate({'address': json.dumps(address_data)})
 
-    assert model_1.address == model_2.address == model_3.address
+    assert model_1.address == model_2.address == model_3.address == model_4.address
     assert model_1.model_dump(mode='json')['address'] == address_string
