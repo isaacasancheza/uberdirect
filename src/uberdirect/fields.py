@@ -1,13 +1,13 @@
 import json
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated, Any, TypedDict
 
-from pydantic import BaseModel, GetCoreSchemaHandler
+from pydantic import GetCoreSchemaHandler
 from pydantic_core import core_schema
 from pydantic_extra_types.phone_numbers import PhoneNumberValidator
 
 
-class _StructuredAddressModel(BaseModel):
+class _StructuredAddressDict(TypedDict):
     street_address: tuple[str] | tuple[str, str]
     city: str
     state: str
@@ -40,15 +40,15 @@ class _StructuredAddressAnnotation:
         )
 
     @classmethod
-    def _parse_str(cls, value: str) -> _StructuredAddressModel:
-        return _StructuredAddressModel.model_validate(json.loads(value))
+    def _parse_str(cls, value: str) -> _StructuredAddressDict:
+        return _StructuredAddressDict(json.loads(value))
 
     @classmethod
-    def _serialize(cls, value: _StructuredAddressModel | str) -> str:
+    def _serialize(cls, value: _StructuredAddressDict | str) -> str:
         if isinstance(value, str):
             return value
         return json.dumps(
-            value.model_dump(),
+            value,
             sort_keys=True,
             separators=(',', ':'),
         )
@@ -97,6 +97,4 @@ type PhoneNumber = Annotated[
     ),
 ]
 type DecimalFromInt = Annotated[Decimal, _DecimalFromIntAnnotation]
-type StructuredAddress = Annotated[
-    _StructuredAddressModel, _StructuredAddressAnnotation
-]
+type StructuredAddress = Annotated[_StructuredAddressDict, _StructuredAddressAnnotation]

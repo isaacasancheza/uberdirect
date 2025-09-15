@@ -1,6 +1,6 @@
 [project]
 name = "uberdirect"
-version = "0.10.2"
+version = "0.11.0"
 description = "Simple Uber Direct API Wrapper"
 authors = [
     { name = "Isaac Sánchez", email = "isaac@elrincondelsanchez.com" }

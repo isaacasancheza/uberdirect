@@ -10,20 +10,20 @@ class Model(BaseModel):
 
 
 def test_structured_address():
-    address_data = dict(
-        street_address=('Street 1',),
-        city='CDMX',
-        state='VZ',
-        country='MX',
-        zip_code='99999',
-    )
+    address_data: fields.StructuredAddress = {
+        'street_address': ('Street 1',),
+        'city': 'CDMX',
+        'state': 'VZ',
+        'country': 'MX',
+        'zip_code': '99999',
+    }
     address_string = json.dumps(
         address_data,
         sort_keys=True,
         separators=(',', ':'),
     )
 
-    model_1 = Model(address=address_data)  # type: ignore
+    model_1 = Model(address=address_data)
     model_2 = Model.model_validate({'address': address_data})
     model_3 = Model.model_validate({'address': address_string})
     model_4 = Model.model_validate({'address': json.dumps(address_data)})
