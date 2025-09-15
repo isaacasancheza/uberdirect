@@ -73,11 +73,20 @@ class _DecimalFromIntAnnotation(Decimal):
                 ),
                 core_schema.decimal_schema(decimal_places=2),
             ],
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                cls._decimal_to_int
+            ),
         )
 
     @classmethod
     def _int_to_decimal(cls, value: int) -> Decimal:
         return Decimal(str(value / 100))
+
+    @classmethod
+    def _decimal_to_int(cls, value: int | Decimal) -> int:
+        if isinstance(value, Decimal):
+            return int(value * 100)
+        return value
 
 
 type PhoneNumber = Annotated[
