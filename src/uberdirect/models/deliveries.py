@@ -2,10 +2,11 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import Base64Bytes, BaseModel, EmailStr, Field, StringConstraints
+from pydantic import Base64Bytes, EmailStr, Field, StringConstraints
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import constants, fields
+from uberdirect.models.base import BaseModel
 
 
 class DeliveryManifestItemCustomizationOptionTaxInfo(BaseModel):
