@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Field, StringConstraints
+from pydantic import Base64Bytes, BaseModel, EmailStr, Field, StringConstraints
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import constants, fields
@@ -742,3 +742,12 @@ class DeliveryUpdateRequest(BaseModel):
     """
     Amount in cents ( ¹/₁₀₀ of currency unit ) that will be paid to the courier as a tip.
     """
+
+
+class DeliveryProofOfDeliveryRequest(BaseModel):
+    type: constants.ProofOfDeliveryType
+    waypoint: constants.ProofOfDeliveryWaypoint
+
+
+class DeliveryProofOfDeliveryResponse(BaseModel):
+    document: Base64Bytes

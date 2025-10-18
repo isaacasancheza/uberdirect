@@ -14,6 +14,8 @@ from .deliveries import (
     DeliveryManifestItemDimensions,
     DeliveryPickupVerification,
     DeliveryPincodeRequirement,
+    DeliveryProofOfDeliveryRequest,
+    DeliveryProofOfDeliveryResponse,
     DeliveryReturnVerificationRequirement,
     DeliverySignatureRequirement,
     DeliveryUpdateRequest,

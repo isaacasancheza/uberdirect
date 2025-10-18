@@ -34,3 +34,13 @@ class Deliveries(Base):
     ) -> models.Delivery:
         response = self._post({}, 'deliveries', delivery_id, 'cancel')
         return models.Delivery.model_validate(response)
+
+    def proof_of_delivery(
+        self,
+        /,
+        delivery_id: str,
+        *,
+        request: models.DeliveryProofOfDeliveryRequest,
+    ) -> models.DeliveryProofOfDeliveryResponse:
+        response = self._post(request, 'deliveries', delivery_id, 'proof-of-delivery')
+        return models.DeliveryProofOfDeliveryResponse.model_validate(response)

@@ -5,3 +5,7 @@ from .deliveries import (
     DeliveryPincodeRequirementType,
     DeliveryUndeliverableAction,
 )
+from .proof_of_delivery import (
+    ProofOfDeliveryType,
+    ProofOfDeliveryWaypoint,
+)
