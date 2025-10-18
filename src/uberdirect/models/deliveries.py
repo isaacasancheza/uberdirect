@@ -315,6 +315,10 @@ class LatLng(BaseModel):
 
 
 class CourierPublicPhoneInfo(BaseModel):
+    """
+    Information about the public phone details for the courier.
+    """
+
     formatted_phone_number: str
     """
     The formatted phone number with the pin code.
@@ -348,6 +352,9 @@ class Courier(BaseModel):
     """
 
     location: LatLng
+    """
+    Latitude and longitude indicating courier's location.
+    """
 
     img_href: str
     """
@@ -355,6 +362,9 @@ class Courier(BaseModel):
     """
 
     public_phone_info: CourierPublicPhoneInfo
+    """
+    Information about the public phone details for the courier.
+    """
 
 
 class Delivery(BaseModel):
