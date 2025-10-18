@@ -1,4 +1,6 @@
 from .deliveries import (
+    Courier,
+    CourierPublicPhoneInfo,
     Delivery,
     DeliveryBarcodeRequirement,
     DeliveryCreateRequest,
