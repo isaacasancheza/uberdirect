@@ -4,6 +4,7 @@ from .deliveries import (
     Delivery,
     DeliveryBarcodeRequirement,
     DeliveryCreateRequest,
+    DeliveryCreateRequestTestSpecification,
     DeliveryDropoffVerification,
     DeliveryExternalUserInfo,
     DeliveryExternalUserInfoDevice,
@@ -29,4 +30,8 @@ from .deliveries import (
 from .quotes import (
     QuoteCreateRequest,
     QuoteCreateResponse,
+)
+from .robocourier import (
+    RoboCourierAuto,
+    RoboCourierCustom,
 )
