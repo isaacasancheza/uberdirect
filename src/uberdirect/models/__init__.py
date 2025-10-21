@@ -31,7 +31,8 @@ from .quotes import (
     QuoteCreateRequest,
     QuoteCreateResponse,
 )
-from .robocourier import (
+from .robo_courier import (
+    RoboCourier,
     RoboCourierAuto,
     RoboCourierCustom,
 )

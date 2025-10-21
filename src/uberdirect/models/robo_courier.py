@@ -1,24 +1,29 @@
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
+
+from pydantic import Field
 
 from uberdirect import constants
 from uberdirect.models.base import BaseModel
 
+type RoboCourier = Annotated[
+    RoboCourierAuto | RoboCourierCustom,
+    Field(
+        discriminator='mode',
+    ),
+]
 
-class RoboCourier(BaseModel):
-    mode: constants.RoboCourierMode
-    cancel_reason: constants.RoboCourierCancelReason | None = None
 
-
-class RoboCourierAuto(RoboCourier):
+class RoboCourierAuto(BaseModel):
     """
     https://developer.uber.com/docs/deliveries/guides/robocourier
     """
 
     mode: Literal[constants.RoboCourierMode.AUTO]
+    cancel_reason: constants.RoboCourierCancelReason | None = None
 
 
-class RoboCourierCustom(RoboCourier):
+class RoboCourierCustom(BaseModel):
     """
     https://developer.uber.com/docs/deliveries/guides/robocourier
     """

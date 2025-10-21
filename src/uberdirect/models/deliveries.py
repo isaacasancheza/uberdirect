@@ -7,7 +7,7 @@ from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import constants, fields
 from uberdirect.models.base import BaseModel
-from uberdirect.models.robocourier import RoboCourierAuto, RoboCourierCustom
+from uberdirect.models.robo_courier import RoboCourier
 
 
 class DeliveryManifestItemCustomizationOptionTaxInfo(BaseModel):
@@ -452,9 +452,7 @@ class Delivery(BaseModel):
 
 
 class DeliveryCreateRequestTestSpecification(BaseModel):
-    robo_courier_specification: RoboCourierAuto | RoboCourierCustom = Field(
-        discriminator='mode',
-    )
+    robo_courier_specification: RoboCourier
     """
     Robo Courier Specification.
     """
