@@ -6,20 +6,20 @@ from uberdirect import constants, models
 
 
 class Model(BaseModel):
-    robo_courier: models.RoboCourier
+    robocourier: models.RoboCourier
 
 
-def test_robo_courier():
+def test_robocourier():
     now = datetime.now(timezone.utc)
 
     Model(
-        robo_courier=models.RoboCourierAuto(
+        robocourier=models.RoboCourierAuto(
             mode=constants.RoboCourierMode.AUTO,
         )
     )
 
     Model(
-        robo_courier=models.RoboCourierCustom(
+        robocourier=models.RoboCourierCustom(
             mode=constants.RoboCourierMode.CUSTOM,
             enroute_for_pickup_at=now,
             pickup_at=now,
