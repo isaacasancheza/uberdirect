@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from pydantic_extra_types.coordinate import Latitude, Longitude
-
 from uberdirect import fields
 from uberdirect.models.base import BaseModel
 
@@ -12,12 +10,12 @@ class QuoteCreateRequest(BaseModel):
     Pickup address details.
     """
 
-    pickup_latitude: Latitude | None = None
+    pickup_latitude: fields.Latitude | None = None
     """
     Pickup latitude coordinate.
     """
 
-    pickup_longitude: Longitude | None = None
+    pickup_longitude: fields.Longitude | None = None
     """
     Pickup longitude coordinate.
     """
@@ -42,12 +40,12 @@ class QuoteCreateRequest(BaseModel):
     Dropoff address details.
     """
 
-    dropoff_latitude: Latitude | None = None
+    dropoff_latitude: fields.Latitude | None = None
     """
     Dropoff latitude coordinate.
     """
 
-    dropoff_longitude: Longitude | None = None
+    dropoff_longitude: fields.Longitude | None = None
     """
     Dropoff longitude coordinate.
     """

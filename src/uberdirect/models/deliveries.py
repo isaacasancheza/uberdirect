@@ -3,7 +3,6 @@ from typing import Annotated
 from uuid import UUID
 
 from pydantic import Base64Bytes, EmailStr, Field, StringConstraints
-from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import constants, fields
 from uberdirect.models.base import BaseModel
@@ -305,12 +304,12 @@ class DeliveryUserFeesSummary(BaseModel):
 
 
 class LatLng(BaseModel):
-    lat: Latitude
+    lat: fields.Latitude
     """
     Latitude.
     """
 
-    lng: Longitude
+    lng: fields.Longitude
     """
     Longitude.
     """
@@ -481,12 +480,12 @@ class DeliveryCreateRequest(BaseModel):
     Business name of the pickup location. This information will be visible in the courier app and will override the pickup_name if provided.
     """
 
-    pickup_latitude: Latitude | None = None
+    pickup_latitude: fields.Latitude | None = None
     """
     Pickup latitude coordinate.
     """
 
-    pickup_longitude: Longitude | None = None
+    pickup_longitude: fields.Longitude | None = None
     """
     Pickup longitude coordinate.
     """
@@ -536,12 +535,12 @@ class DeliveryCreateRequest(BaseModel):
     Business name of the dropoff location.
     """
 
-    dropoff_latitude: Latitude | None = None
+    dropoff_latitude: fields.Latitude | None = None
     """
     Dropoff latitude coordinate. This field adds precision to dropoff_address field. For example, if the dropoff address is "JFK Airport Queens, NY 11430", it would be highly recommended to use coordinates to locate the precise location of the dropoff.
     """
 
-    dropoff_longitude: Longitude | None = None
+    dropoff_longitude: fields.Longitude | None = None
     """
     Dropoff longitude coordinate. This field adds precision to dropoff_address field. For example, if the dropoff address is "JFK Airport Queens, NY 11430", it would be highly recommended to use coordinates to locate the precise location of the dropoff.
     """
@@ -728,12 +727,12 @@ class DeliveryUpdateRequest(BaseModel):
     Additional instructions for the courier at the dropoff location, accessible after the courier accepts the trip and before heading to the dropoff location. Limited to 280 characters.
     """
 
-    dropoff_latitude: Latitude | None = None
+    dropoff_latitude: fields.Latitude | None = None
     """
     Dropoff latitude coordinate.
     """
 
-    dropoff_longitude: Longitude | None = None
+    dropoff_longitude: fields.Longitude | None = None
     """
     Dropoff longitude coordinate.
     """
