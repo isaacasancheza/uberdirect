@@ -1,34 +1,10 @@
-from __future__ import annotations
-
 import json
 from decimal import Decimal
-from typing import Annotated, Any, ClassVar, TypedDict
+from typing import Annotated, Any, TypedDict
 
 from pydantic import GetCoreSchemaHandler
 from pydantic_core import core_schema
 from pydantic_extra_types.phone_numbers import PhoneNumberValidator
-
-
-class Latitude(Decimal):
-    min: ClassVar[Decimal] = Decimal(-90.00)
-    max: ClassVar[Decimal] = Decimal(90.00)
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source: type[Any], handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        return core_schema.decimal_schema(ge=Decimal(cls.min), le=Decimal(cls.max))
-
-
-class Longitude(Decimal):
-    min: ClassVar[Decimal] = Decimal(-180.00)
-    max: ClassVar[Decimal] = Decimal(180.00)
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source: type[Any], handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        return core_schema.decimal_schema(ge=Decimal(cls.min), le=Decimal(cls.max))
 
 
 class _StructuredAddressDict(TypedDict):
