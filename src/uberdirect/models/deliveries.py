@@ -304,18 +304,6 @@ class DeliveryUserFeesSummary(BaseModel):
     user_fee_tax_info: DeliveryUserFeesSummaryTaxInfo
 
 
-class LatLng(BaseModel):
-    lat: Latitude
-    """
-    Latitude.
-    """
-
-    lng: Longitude
-    """
-    Longitude.
-    """
-
-
 class CourierPublicPhoneInfo(BaseModel):
     """
     Information about the public phone details for the courier.
@@ -351,11 +339,6 @@ class Courier(BaseModel):
     phone_number: str
     """
     The courier's phone number. This is a masked phone number that can only receive calls or SMS from the dropoff phone number.
-    """
-
-    location: LatLng
-    """
-    Latitude and longitude indicating courier's location.
     """
 
     img_href: str
