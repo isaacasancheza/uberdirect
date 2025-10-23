@@ -27,7 +27,7 @@ class QuoteCreateRequest(BaseModel):
     Beginning of the window when an order must be picked up. Must be less than 30 days in the future.
     """
 
-    pickup_deadline_dt: datetime | None = None
+    pickup_deadline_dt: fields.PickupDeadlineDt | None = None
     """
     End of the window when an order may be picked up. Must be at least 10 mins later than pickup_ready_dt and at least 20 minutes in the future from now.
     """
@@ -52,12 +52,12 @@ class QuoteCreateRequest(BaseModel):
     Dropoff longitude coordinate.
     """
 
-    dropoff_ready_dt: datetime | None = None
+    dropoff_ready_dt: fields.DropoffReadyDt | None = None
     """
     Beginning of the window when an order must be dropped off. Must be less than or equal to pickup_deadline_dt.
     """
 
-    dropoff_deadline_dt: datetime | None = None
+    dropoff_deadline_dt: fields.DropoffDeadlineDt | None = None
     """
     End of the window when an order must be dropped off. Must be at least 20 mins later than dropoff_ready_dt and must be greater than or equal to pickup_deadline_dt.
     """
