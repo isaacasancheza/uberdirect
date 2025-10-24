@@ -1,8 +1,16 @@
-from datetime import datetime
-from typing import Annotated
+from datetime import datetime, timedelta, timezone
+from typing import Annotated, Self
 from uuid import UUID
 
-from pydantic import Base64Bytes, EmailStr, Field, StringConstraints
+from pydantic import (
+    AwareDatetime,
+    Base64Bytes,
+    EmailStr,
+    Field,
+    StringConstraints,
+    model_validator,
+)
+from pydantic_core import PydanticCustomError
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import constants, fields
@@ -489,7 +497,7 @@ class DeliveryCreateRequest(BaseModel):
     Verification steps (e.g. Picture, Barcode scanning) that must be taken before the pickup can be completed.
     """
 
-    pickup_ready_dt: datetime | None = None
+    pickup_ready_dt: AwareDatetime | None = None
     """
     Beginning of the window when an order must be picked up. Must be less than 30 days in the future.
     """
@@ -660,6 +668,47 @@ class DeliveryCreateRequest(BaseModel):
     Automated Delivery Testing.
     """
 
+    @model_validator(mode='after')
+    def validate_robo_courier_dates(self) -> Self:
+        if not self.test_specifications:
+            return self
+
+        robocourier = self.test_specifications.robo_courier_specification
+        if robocourier.mode != constants.RoboCourierMode.CUSTOM:
+            return self
+
+        # dropoff_at must be within 8 hours of pickup time
+        if self.pickup_ready_dt and self.dropoff_ready_dt:
+            window = self.dropoff_ready_dt - self.pickup_ready_dt
+            if window > timedelta(hours=8):
+                raise PydanticCustomError(
+                    'dropoff_at', 'dropoff_at must be within 8 hours of pickup time'
+                )
+
+        # if a pickup window is specified, enroute_for_pickup_at must occur within the pickup window
+        if self.pickup_ready_dt and self.pickup_deadline_dt:
+            if not (
+                self.pickup_ready_dt
+                < robocourier.enroute_for_pickup_at
+                < self.pickup_deadline_dt
+            ):
+                raise PydanticCustomError(
+                    'enroute_for_pickup_at',
+                    'enroute_for_pickup_at must occur within the pickup window',
+                )
+
+        # if a pickup window is not specified, enroute_for_pickup_at must occur within 30 minutes of the order being placed
+        if not self.pickup_ready_dt and not self.pickup_deadline_dt:
+            now = datetime.now(timezone.utc)
+            window = now + timedelta(minutes=30)
+            if robocourier.enroute_for_pickup_at > window:
+                raise PydanticCustomError(
+                    'enroute_for_pickup_at',
+                    'enroute_for_pickup_at must occur within 30 minutes of the order being placed',
+                )
+
+        return self
+
 
 class DeliveryUpdateRequestPickupVerification(BaseModel):
     barcodes: list[DeliveryBarcodeRequirement]
@@ -686,7 +735,7 @@ class DeliveryUpdateRequest(BaseModel):
     Additional instructions for the courier at the pickup location. Max 280 characters.
     """
 
-    pickup_ready_dt: datetime | None = None
+    pickup_ready_dt: AwareDatetime | None = None
     """
     (RFC 3339) Beginning of the window when an order must be picked up. Must be less than 30 days in the future.
     """

@@ -3,11 +3,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Annotated, Any, TypedDict
 
-from pydantic import (
-    AfterValidator,
-    GetCoreSchemaHandler,
-    ValidationInfo,
-)
+from pydantic import AfterValidator, AwareDatetime, GetCoreSchemaHandler, ValidationInfo
 from pydantic_core import PydanticCustomError, core_schema
 from pydantic_extra_types.phone_numbers import PhoneNumberValidator
 
@@ -174,21 +170,21 @@ type StructuredAddress = Annotated[
 ]
 
 type PickupDeadlineDt = Annotated[
-    datetime,
+    AwareDatetime,
     AfterValidator(
         _validate_pickup_deadline_dt,
     ),
 ]
 
 type DropoffReadyDt = Annotated[
-    datetime,
+    AwareDatetime,
     AfterValidator(
         _validate_dropoff_ready_dt,
     ),
 ]
 
 type DropoffDeadlineDt = Annotated[
-    datetime,
+    AwareDatetime,
     AfterValidator(
         _validate_dropoff_deadline_dt,
     ),

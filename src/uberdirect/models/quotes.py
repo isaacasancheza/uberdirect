@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from pydantic import AwareDatetime
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from uberdirect import fields
@@ -22,7 +23,7 @@ class QuoteCreateRequest(BaseModel):
     Pickup longitude coordinate.
     """
 
-    pickup_ready_dt: datetime | None = None
+    pickup_ready_dt: AwareDatetime | None = None
     """
     Beginning of the window when an order must be picked up. Must be less than 30 days in the future.
     """
