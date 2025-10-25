@@ -677,20 +677,12 @@ class DeliveryCreateRequest(BaseModel):
         if robocourier.mode != constants.RoboCourierMode.CUSTOM:
             return self
 
-        # dropoff_at must be within 8 hours of pickup time
-        if self.pickup_ready_dt and self.dropoff_ready_dt:
-            window = self.dropoff_ready_dt - self.pickup_ready_dt
-            if window > timedelta(hours=8):
-                raise PydanticCustomError(
-                    'dropoff_at', 'dropoff_at must be within 8 hours of pickup time'
-                )
-
         # if a pickup window is specified, enroute_for_pickup_at must occur within the pickup window
         if self.pickup_ready_dt and self.pickup_deadline_dt:
             if not (
                 self.pickup_ready_dt
-                < robocourier.enroute_for_pickup_at
-                < self.pickup_deadline_dt
+                <= robocourier.enroute_for_pickup_at
+                <= self.pickup_deadline_dt
             ):
                 raise PydanticCustomError(
                     'enroute_for_pickup_at',
