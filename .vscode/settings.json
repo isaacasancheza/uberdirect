@@ -1,0 +1,27 @@
+{
+    "files.exclude": {
+        "**/*.pyc": true,
+        "**/.venv/": true,
+        "**/.aws-sam/": true,
+        "**/.pycache/": true,
+        "**/__pycache__/": true,
+        "**/.pytest_cache/": true,
+    },
+    "search.exclude": {
+        "**/*.pyc": true,
+        "**/.venv/": true,
+        "**/.aws-sam/": true,
+        "**/.pycache/": true,
+        "**/__pycache__/": true,
+        "**/.pytest_cache/": true,
+    },
+    "python.analysis.exclude": [
+        "**/.venv",
+        "**/*.pyc",
+        "**/cdk.out",
+        "**/.aws-sam",
+        "**/.pycache",
+        "**/__pycache__",
+        "**/.pytest_cache",
+    ]
+}
