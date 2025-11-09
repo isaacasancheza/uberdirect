@@ -1,8 +1,8 @@
 import requests
 
-from uberdirect.core.base import AccessToken, APIVersion, Base
-from uberdirect.core.deliveries import Deliveries
-from uberdirect.core.quotes import Quotes
+from uberpy.core.base import AccessToken, APIVersion, Base
+from uberpy.core.deliveries import Deliveries
+from uberpy.core.quotes import Quotes
 
 
 class UberDirect(Base):

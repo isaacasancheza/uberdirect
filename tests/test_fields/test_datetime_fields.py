@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel, ValidationError
 from pytest import raises
 
-from uberdirect import fields
+from uberpy import fields
 
 
 class Model(BaseModel):

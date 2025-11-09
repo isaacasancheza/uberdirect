@@ -1,5 +1,5 @@
-from uberdirect import models
-from uberdirect.core.base import Base
+from uberpy import models
+from uberpy.core.base import Base
 
 
 class Quotes(Base):

@@ -13,9 +13,9 @@ from pydantic import (
 from pydantic_core import PydanticCustomError
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from uberdirect import constants, fields
-from uberdirect.models.base import BaseModel
-from uberdirect.models.robocourier import RoboCourier
+from uberpy import constants, fields
+from uberpy.models.base import BaseModel
+from uberpy.models.robocourier import RoboCourier
 
 
 class DeliveryManifestItemCustomizationOptionTaxInfo(BaseModel):

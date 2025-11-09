@@ -4,8 +4,8 @@ from typing import Annotated, Literal
 from pydantic import AwareDatetime, Field, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
-from uberdirect import constants
-from uberdirect.models.base import BaseModel
+from uberpy import constants
+from uberpy.models.base import BaseModel
 
 type RoboCourier = Annotated[
     RoboCourierAuto | RoboCourierCustom,

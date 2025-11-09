@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel
 
-from uberdirect import fields
+from uberpy import fields
 
 
 class Model(BaseModel):

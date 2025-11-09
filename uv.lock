@@ -320,8 +320,8 @@ wheels = [
 ]
 
 [[package]]
-name = "uberdirect"
-version = "0.18.0"
+name = "uberpy"
+version = "0.20.0"
 source = { editable = "." }
 dependencies = [
     { name = "phonenumberslite" },

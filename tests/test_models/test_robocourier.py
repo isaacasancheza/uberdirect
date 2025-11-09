@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel
 
-from uberdirect import constants, models
+from uberpy import constants, models
 
 
 class Model(BaseModel):

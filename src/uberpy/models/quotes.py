@@ -3,8 +3,8 @@ from datetime import datetime
 from pydantic import AwareDatetime
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from uberdirect import fields
-from uberdirect.models.base import BaseModel
+from uberpy import fields
+from uberpy.models.base import BaseModel
 
 
 class QuoteCreateRequest(BaseModel):
